@@ -69,7 +69,7 @@ std::vector<std::complex<double>> ButterworthFilter::poly(std::vector<std::compl
     for (int i = 0; i < n; i++) {
 
         for (int j = i; j != -1; j--) {
-            std::cout << roots[j] << std::endl;
+            //std::cout << roots[j] << std::endl;
             coefficients[j + 1] = coefficients[j + 1] - (roots[i] * coefficients[j]);
         }
 
@@ -83,13 +83,14 @@ std::vector<std::complex<double>> ButterworthFilter::poly(std::vector<std::compl
 
 void ButterworthFilter::computePhaseAngles() {
 
-    mPhaseAngles.resize(mOrder + 1);
+    mPhaseAngles.resize(mOrder);
     int i = 1;
 
     for (auto &&x:mPhaseAngles) {
         x = M_PI_2 + (M_PI * (2.0 * i - 1.0) / (2.0 * mOrder));
         i++;
     }
+
 }
 
 void ButterworthFilter::computeContinuousTimeRoots() {
@@ -97,21 +98,29 @@ void ButterworthFilter::computeContinuousTimeRoots() {
     //First compute  the phase angles of the roots
     computePhaseAngles();
 
-    mContinuousTimeRoots.resize(mOrder + 1);
+    mContinuousTimeRoots.resize(mOrder);
     int i = 0;
 
     for (auto &&x:mContinuousTimeRoots) {
         x = {mCutoff_Frequency * cos(mPhaseAngles[i]), mCutoff_Frequency * sin(mPhaseAngles[i])};
         i++;
     }
+
 }
 
 void ButterworthFilter::computeContinuousTimeTF() {
 
     // computeContinuousTimeRoots();
     mContinuousTimePolyCoeffs.resize(mOrder + 1);
+
     mContinuousTimePolyCoeffs = poly(mContinuousTimeRoots);
+
+    for (auto&& x: mContinuousTimePolyCoeffs)
+    {
+        std::cout<<std::abs(x)<<std::endl;
+    }
     int a = 1;
+
 
 
 }
@@ -135,5 +144,6 @@ void ButterworthFilter::PrintFilter_ContinuousTimeRoots() {
     for (auto &&x:mContinuousTimeRoots) {
         std::cout << std::real(x) << " + j " << std::imag(x) << std::endl;
     }
+    std::cout<<"\n" ;
 
 }

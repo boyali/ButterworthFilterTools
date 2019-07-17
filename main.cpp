@@ -12,7 +12,7 @@ int main() {
     double Wp, Ws, Ap, As;
 
 
-    Wp = 2.0;
+    Wp = 1.0;
     Ws = 3.0;
     Ap = 6.0;
     As = 20.0;
@@ -41,15 +41,15 @@ int main() {
     bf.PrintFilter_Specs();
 
 
-    // Polynomial test
-    vector<complex<double>> roots{{-1, 2},
-                                  {-1, -2}};
-
-
-    std::vector<std::complex<double>> coeff = bf.poly(roots);
-    for (auto &&c: coeff) {
-        std::cout << c << " ";
-    }
+//    // Polynomial test
+//    vector<complex<double>> roots{{-1, 2},
+//                                  {-1, -2}};
+//
+//
+//    std::vector<std::complex<double>> coeff = bf.poly(roots);
+//    for (auto &&c: coeff) {
+//        std::cout << c << " ";
+//    }
 
     //bf.computePhaseAngles();
     bf.computeContinuousTimeRoots();
@@ -57,6 +57,7 @@ int main() {
 
     // Compute Continous Time TF
     bf.computeContinuousTimeTF();
+
 
     return 0;
 }
