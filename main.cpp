@@ -47,6 +47,16 @@ int main() {
 
 
     std::vector<std::complex<double>> coeff = bf.poly(roots);
+    for (auto &&c: coeff) {
+        std::cout << c << " ";
+    }
+
+    //bf.computePhaseAngles();
+    bf.computeContinuousTimeRoots();
+    bf.PrintFilter_ContinuousTimeRoots();
+
+    // Compute Continous Time TF
+    bf.computeContinuousTimeTF();
 
     return 0;
 }

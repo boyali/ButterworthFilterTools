@@ -8,11 +8,9 @@
 #include "ButterTool.h"
 
 
-ButterworthFilter::ButterworthFilter() {
-    mOrder = 0;
-    mCutoff_Frequency = 0.0;
-
-}
+//ButterworthFilter::ButterworthFilter() {
+//
+//}
 
 
 void ButterworthFilter::Buttord(double Wp, double Ws, double Ap, double As) {
@@ -77,11 +75,43 @@ std::vector<std::complex<double>> ButterworthFilter::poly(std::vector<std::compl
 
     }
 
-    for (int i = 0; i < coefficients.size(); i++) {
-        std::cout << coefficients[i] << " ";
-    }
-
     return coefficients;
+
+
+}
+
+
+void ButterworthFilter::computePhaseAngles() {
+
+    mPhaseAngles.resize(mOrder + 1);
+    int i = 1;
+
+    for (auto &&x:mPhaseAngles) {
+        x = M_PI_2 + (M_PI * (2.0 * i - 1.0) / (2.0 * mOrder));
+        i++;
+    }
+}
+
+void ButterworthFilter::computeContinuousTimeRoots() {
+
+    //First compute  the phase angles of the roots
+    computePhaseAngles();
+
+    mContinuousTimeRoots.resize(mOrder + 1);
+    int i = 0;
+
+    for (auto &&x:mContinuousTimeRoots) {
+        x = {mCutoff_Frequency * cos(mPhaseAngles[i]), mCutoff_Frequency * sin(mPhaseAngles[i])};
+        i++;
+    }
+}
+
+void ButterworthFilter::computeContinuousTimeTF() {
+
+    // computeContinuousTimeRoots();
+    mContinuousTimePolyCoeffs.resize(mOrder + 1);
+    mContinuousTimePolyCoeffs = poly(mContinuousTimeRoots);
+    int a = 1;
 
 
 }
@@ -89,7 +119,21 @@ std::vector<std::complex<double>> ButterworthFilter::poly(std::vector<std::compl
 void ButterworthFilter::PrintFilter_Specs() {
     /*
      * Prints the order and cut-off angular frequency (rad/sec) of the filter
+     *
      * */
     std::cout << "\nThe order of the filter : " << this->mOrder << std::endl;
     std::cout << "Cut-off Frequency : " << this->mCutoff_Frequency << " rad/sec\n" << std::endl;
+
+}
+
+void ButterworthFilter::PrintFilter_ContinuousTimeRoots() {
+    /*
+     * Prints the order and cut-off angular frequency (rad/sec) of the filter
+     * */
+    std::cout << "\n Roots of Continous Time Filter Transfer Function Denominator are : " << std::endl;
+
+    for (auto &&x:mContinuousTimeRoots) {
+        std::cout << std::real(x) << " + j " << std::imag(x) << std::endl;
+    }
+
 }
