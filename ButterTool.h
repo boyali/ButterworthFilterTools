@@ -1,0 +1,14 @@
+//
+// Created by ali on 17/07/19.
+//
+
+#ifndef BUTTERWORTHFILTERTOOLS_BUTTERTOOL_H
+#define BUTTERWORTHFILTERTOOLS_BUTTERTOOL_H
+
+
+class ButterTool {
+
+};
+
+
+#endif //BUTTERWORTHFILTERTOOLS_BUTTERTOOL_H
