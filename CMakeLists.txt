@@ -3,4 +3,4 @@ project(ButterworthFilterTools2)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(ButterworthFilterTools2 main.cpp)
+add_executable(ButterworthFilterTools2 main.cpp ButterTool.cpp ButterTool.h)

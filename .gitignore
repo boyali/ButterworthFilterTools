@@ -2,3 +2,5 @@
 .idea
 
 cmake-build-debug/
+Docs/.ipynb_checkpoints
+
