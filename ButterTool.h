@@ -8,6 +8,11 @@
 #include <cmath>
 #include <complex>
 
+struct Order_Cutoff {
+    int N;
+    double Wc;
+};
+
 class ButterworthFilter {
 
 public:
@@ -16,22 +21,23 @@ public:
 
     //Prints the filter order and cutoff frequency
     void PrintFilter_Specs();
-
     void PrintFilter_ContinuousTimeRoots();
 
-    void Buttord(double Wp, double Ws, double Ap, double As);
-    void setCuttoffFrequency(double val);
+    void PrintContinuousTimeTF();
 
+    void Buttord(double Wp, double Ws, double Ap, double As);
+
+    // Setters and Getters
+    void setCuttoffFrequency(double val);
     void setOrder(int N);
 
-    // polynomial function returns the coefficients given the roots of a polynomial
-    std::vector<std::complex<double>> poly(std::vector<std::complex<double >> &roots);
 
-    void computePhaseAngles();
+    // Get the order, cut-off frequency and other filter properties
+    Order_Cutoff getOrderCutOff();
 
-    void computeContinuousTimeRoots();
 
-    void computeContinuousTimeTF(); // computes continous time transfer function
+    // computes continous time transfer function
+    void computeContinuousTimeTF();
 
 private:
 
@@ -48,8 +54,31 @@ private:
     // Continuous time transfer function roots
     std::vector<double> mPhaseAngles{0.0};
     std::vector<std::complex<double >> mContinuousTimeRoots{{0.0, 0.0}};
-    std::vector<std::complex<double>> mContinuousTimePolyCoeffs{{0.0, 0.0}};
 
+    std::vector<std::complex<double>> mContinuousTimeDenominator{{0.0, 0.0}};
+    double mContinuousTimeNumerator = 0.0;
+
+
+    // METHODS
+    // polynomial function returns the coefficients given the roots of a polynomial
+    std::vector<std::complex<double>> poly(std::vector<std::complex<double >> &roots);
+
+
+    /*
+     * Implementation starts by computing the pole locations of the filter in the polar coordinate system .
+     * The algorithm first locates the poles  computing the phase angle and then poles as a complex number
+     * From the poles, the coefficients of denominator polynomial is calculated.
+     *
+     * Therefore, without phase, the roots cannot be calculated. The following three methods should be called
+     * successively.
+     *
+     * */
+
+    // computes the filter root locations in the polar coordinate system
+    void computePhaseAngles();
+
+    // Computes continuous time roots from the phase angles
+    void computeContinuousTimeRoots();
 
 };
 

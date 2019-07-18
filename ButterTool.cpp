@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cmath>
 #include <complex>
+#include <string>
+#include <cstdio>
 
 #include "ButterTool.h"
 
@@ -27,9 +29,9 @@ void ButterworthFilter::Buttord(double Wp, double Ws, double Ap, double As) {
 
     alpha = Ws / Wp;
     beta = sqrt((pow(10, As / 10.0) - 1.0) / (pow(10, Ap / 10.0) - 1.0));
+    int order = std::ceil(log(beta) / log(alpha));
 
-
-    setOrder(std::ceil(log(beta) / log(alpha)));
+    setOrder(order);
 
     // right limit, left limit
     /*
@@ -110,19 +112,19 @@ void ButterworthFilter::computeContinuousTimeRoots() {
 
 void ButterworthFilter::computeContinuousTimeTF() {
 
-    // computeContinuousTimeRoots();
-    mContinuousTimePolyCoeffs.resize(mOrder + 1);
+    computeContinuousTimeRoots();
+    mContinuousTimeDenominator.resize(mOrder + 1);
 
-    mContinuousTimePolyCoeffs = poly(mContinuousTimeRoots);
+    mContinuousTimeDenominator = poly(mContinuousTimeRoots);
+    mContinuousTimeNumerator = pow(mCutoff_Frequency, mOrder);
 
-    for (auto&& x: mContinuousTimePolyCoeffs)
-    {
-        std::cout<<std::abs(x)<<std::endl;
-    }
-    int a = 1;
+}
 
+Order_Cutoff ButterworthFilter::getOrderCutOff() {
 
+    Order_Cutoff NWc{mOrder, mCutoff_Frequency};
 
+    return NWc;
 }
 
 void ButterworthFilter::PrintFilter_Specs() {
@@ -147,3 +149,27 @@ void ButterworthFilter::PrintFilter_ContinuousTimeRoots() {
     std::cout<<"\n" ;
 
 }
+
+void ButterworthFilter::PrintContinuousTimeTF() {
+
+    int n = mOrder;
+
+    std::cout << "The Continuous Time Transfer Function of the Filter is ;" << std::endl;
+    printf("         %4.3f \n", mContinuousTimeNumerator);
+
+    for (int i = 0; i <= n; i++) {
+        std::cout << "--------";
+    }
+
+    std::cout << "--------\n";
+
+    for (int i = n; i > 0; i--) {
+
+        printf("%4.3f *", mContinuousTimeDenominator[n - i].real());
+        printf("s[%d] + ", i);
+
+    }
+
+    printf("%4.3f", mContinuousTimeDenominator[n].real());
+}
+

@@ -12,14 +12,13 @@ int main() {
     double Wp, Ws, Ap, As;
 
 
-    Wp = 1.0;
-    Ws = 3.0;
-    Ap = 6.0;
-    As = 20.0;
+    Wp = 2.0; // passband frequency
+    Ws = 3.0; // stopband frequency
+    Ap = 6.0; // passband ripple mag or loss
+    As = 20.0; // stop band rippe attenuation
 
 
     ButterworthFilter bf;
-
 
     /*
      * After creating a filter object, you can explicitly set the order N and cutOff frequency to get the filter
@@ -38,25 +37,20 @@ int main() {
 
     // Computing filter coefficients from the specs
     bf.Buttord(Wp, Ws, Ap, As);
+
+    // Get the computed order and Cut-off frequency
+
+    Order_Cutoff NWc = bf.getOrderCutOff();
+    cout << " The computed order is ;" << NWc.N << endl;
+    cout << " The computed cut-off frequency is ;" << NWc.Wc << endl;
+
+
     bf.PrintFilter_Specs();
-
-
-//    // Polynomial test
-//    vector<complex<double>> roots{{-1, 2},
-//                                  {-1, -2}};
-//
-//
-//    std::vector<std::complex<double>> coeff = bf.poly(roots);
-//    for (auto &&c: coeff) {
-//        std::cout << c << " ";
-//    }
-
-    //bf.computePhaseAngles();
-    bf.computeContinuousTimeRoots();
-    bf.PrintFilter_ContinuousTimeRoots();
 
     // Compute Continous Time TF
     bf.computeContinuousTimeTF();
+    bf.PrintFilter_ContinuousTimeRoots();
+    bf.PrintContinuousTimeTF();
 
 
     return 0;
