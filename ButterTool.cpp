@@ -10,9 +10,6 @@
 #include "ButterTool.h"
 
 
-//ButterworthFilter::ButterworthFilter() {
-//
-//}
 
 
 void ButterworthFilter::Buttord(double Wp, double Ws, double Ap, double As) {
@@ -125,6 +122,8 @@ void ButterworthFilter::computeDiscreteTimeTF() {
     // Resizes the roots and zeros to the new order of discrete time then fills the values by Bilinear Transformation
     mDiscreteTimeZeros.resize(mOrder, {-1.0, 0.0}); // Butter puts zeros at -1.0 for causality
     mDiscreteTimeRoots.resize(mOrder, {0.0, 0.0});
+    mAn.resize(mOrder, 0.0);
+    mBn.resize(mOrder, 0.0);
 
     // Gain of the discrete time function
     std::complex<double> gain{mContinuousTimeNumerator, 0.0};
@@ -138,17 +137,23 @@ void ButterworthFilter::computeDiscreteTimeTF() {
         i++;
     }
 
-
+    mDiscreteTimeDenominator = poly(mDiscreteTimeRoots);
 
     // Obtain the coefficients of numerator and denominator
-
+    i = 0;
     mDiscreteTimeNumerator = poly(mDiscreteTimeZeros);
     for (auto &&dn :mDiscreteTimeNumerator) {
         dn = dn * gain;
+        mBn[i] = dn.real();
+        i++;
     }
 
 
-    mDiscreteTimeDenominator = poly(mDiscreteTimeRoots);
+    i = 0;
+    for (auto &&dd :mDiscreteTimeDenominator) {
+        mAn[i] = dd.real();
+        i++;
+    }
 
 
 }
@@ -158,6 +163,13 @@ Order_Cutoff ButterworthFilter::getOrderCutOff() {
     Order_Cutoff NWc{mOrder, mCutoff_Frequency};
 
     return NWc;
+}
+
+DifferenceAnBn ButterworthFilter::getAnBn() {
+
+    DifferenceAnBn AnBn{mAn, mBn};
+
+    return AnBn;
 }
 
 void ButterworthFilter::PrintFilter_Specs() {
@@ -235,4 +247,12 @@ void ButterworthFilter::PrintDiscreteTimeTF() {
     }
 
     printf("%4.3f", mDiscreteTimeDenominator[n].real());
+    std::cout << "\n" << std::endl;
+
+//    for (int i = n; i > 0; i--) {
+//
+//        std::cout << "\n" << mDiscreteTimeDenominator[n - i].real() << std::endl;
+//
+//
+//    }
 }

@@ -13,11 +13,14 @@ struct Order_Cutoff {
     double Wc;
 };
 
+struct DifferenceAnBn {
+    std::vector<double> An;
+    std::vector<double> Bn;
+};
+
 class ButterworthFilter {
 
 public:
-
-//    ButterworthFilter();
 
     //Prints the filter order and cutoff frequency
     void PrintFilter_Specs();
@@ -36,6 +39,8 @@ public:
 
     // Get the order, cut-off frequency and other filter properties
     Order_Cutoff getOrderCutOff();
+
+    DifferenceAnBn getAnBn();
 
 
     // computes continous time transfer function
@@ -66,13 +71,18 @@ private:
     std::vector<std::complex<double >> mDiscreteTimeRoots{{0.0, 0.0}};
     std::vector<std::complex<double >> mDiscreteTimeZeros{{0.0, 0.0}};
 
-    // Continous time transfer function numerator denominators
+    // Continuous time transfer function numerator denominators
     std::vector<std::complex<double>> mContinuousTimeDenominator{{0.0, 0.0}};
     double mContinuousTimeNumerator = 0.0;
 
     // Discrete time transfer function numerator denominators
     std::vector<std::complex<double>> mDiscreteTimeDenominator{{0.0, 0.0}};
     std::vector<std::complex<double>> mDiscreteTimeNumerator{{0.0, 0.0}};
+
+    // Numerator and Denominator Coefficients Bn and An
+
+    std::vector<double> mAn{0.0};
+    std::vector<double> mBn{0.0};
 
 
     // METHODS

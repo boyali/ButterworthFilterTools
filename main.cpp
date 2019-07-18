@@ -12,10 +12,10 @@ int main() {
     double Wp, Ws, Ap, As;
 
 
-    Wp = 2.0; // passband frequency
-    Ws = 3.0; // stopband frequency
-    Ap = 6.0; // passband ripple mag or loss
-    As = 20.0; // stop band rippe attenuation
+    Wp = 2.0; // passband frequency [rad/sec]
+    Ws = 3.0; // stopband frequency [rad/sec]
+    Ap = 6.0; // passband ripple mag or loss [dB]
+    As = 20.0; // stop band rippe attenuation [dB]
 
 
     ButterworthFilter bf;
@@ -56,6 +56,10 @@ int main() {
     // Compute Discrete Time TF
     bf.computeDiscreteTimeTF();
     bf.PrintDiscreteTimeTF();
+
+    // get An Bn
+
+    DifferenceAnBn AnBn = bf.getAnBn();
 
 
     return 0;
