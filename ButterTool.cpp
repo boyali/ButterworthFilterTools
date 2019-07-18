@@ -125,15 +125,14 @@ void ButterworthFilter::computeDiscreteTimeTF() {
     mAn.resize(mOrder, 0.0);
     mBn.resize(mOrder, 0.0);
 
-    // Gain of the discrete time function
-    std::complex<double> gain{mContinuousTimeNumerator, 0.0};
+    mDiscreteTimeGain = {mContinuousTimeNumerator, 0.0};
 
     // Bilinear Transformation of the Roots
     int i = 0;
     for (auto &&dr: mDiscreteTimeRoots) {
         dr = (1.0 + 2.0 * mContinuousTimeRoots[i] / 2.0) / (1.0 - Td * mContinuousTimeRoots[i] / 2.0);
 
-        gain = gain / (1.0 - mContinuousTimeRoots[i]);
+        mDiscreteTimeGain = mDiscreteTimeGain / (1.0 - mContinuousTimeRoots[i]);
         i++;
     }
 
@@ -143,7 +142,7 @@ void ButterworthFilter::computeDiscreteTimeTF() {
     i = 0;
     mDiscreteTimeNumerator = poly(mDiscreteTimeZeros);
     for (auto &&dn :mDiscreteTimeNumerator) {
-        dn = dn * gain;
+        dn = dn * mDiscreteTimeGain;
         mBn[i] = dn.real();
         i++;
     }
@@ -155,6 +154,7 @@ void ButterworthFilter::computeDiscreteTimeTF() {
         i++;
     }
 
+    int a = 1;
 
 }
 

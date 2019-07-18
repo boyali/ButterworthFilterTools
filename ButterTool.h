@@ -62,6 +62,8 @@ private:
     double mCutoff_Frequency = 0.0;    // filter cut-off frequency [rad/sec]
 
     const double Td = 2.0;
+    // Gain of the discrete time function
+    std::complex<double> mDiscreteTimeGain{1.0, 0.0};
 
     // Continuous time transfer function roots
     std::vector<double> mPhaseAngles{0.0};
@@ -69,7 +71,7 @@ private:
 
     // Discrete time zeros and roots
     std::vector<std::complex<double >> mDiscreteTimeRoots{{0.0, 0.0}};
-    std::vector<std::complex<double >> mDiscreteTimeZeros{{0.0, 0.0}};
+    std::vector<std::complex<double >> mDiscreteTimeZeros{{-1.0, 0.0}};
 
     // Continuous time transfer function numerator denominators
     std::vector<std::complex<double>> mContinuousTimeDenominator{{0.0, 0.0}};

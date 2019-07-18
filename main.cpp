@@ -39,7 +39,7 @@ int main() {
     double Wp, Ws, Ap, As;
 
 
-    Wp = 1.0; // passband frequency [rad/sec]
+    Wp = 2.0; // passband frequency [rad/sec]
     Ws = 3.0; // stopband frequency [rad/sec]
     Ap = 6.0; // passband ripple mag or loss [dB]
     As = 20.0; // stop band rippe attenuation [dB]
