@@ -25,6 +25,8 @@ public:
 
     void PrintContinuousTimeTF();
 
+    void PrintDiscreteTimeTF();
+
     void Buttord(double Wp, double Ws, double Ap, double As);
 
     // Setters and Getters

@@ -55,6 +55,7 @@ int main() {
 
     // Compute Discrete Time TF
     bf.computeDiscreteTimeTF();
+    bf.PrintDiscreteTimeTF();
 
 
     return 0;

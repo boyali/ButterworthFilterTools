@@ -151,9 +151,6 @@ void ButterworthFilter::computeDiscreteTimeTF() {
     mDiscreteTimeDenominator = poly(mDiscreteTimeRoots);
 
 
-    int p = 1;
-
-
 }
 
 Order_Cutoff ButterworthFilter::getOrderCutOff() {
@@ -190,7 +187,7 @@ void ButterworthFilter::PrintContinuousTimeTF() {
 
     int n = mOrder;
 
-    std::cout << "The Continuous Time Transfer Function of the Filter is ;" << std::endl;
+    std::cout << "\nThe Continuous Time Transfer Function of the Filter is ;\n" << std::endl;
     printf("         %4.3f \n", mContinuousTimeNumerator);
 
     for (int i = 0; i <= n; i++) {
@@ -206,6 +203,36 @@ void ButterworthFilter::PrintContinuousTimeTF() {
 
     }
 
-    printf("%4.3f", mContinuousTimeDenominator[n].real());
+    printf("%4.3f \n", mContinuousTimeDenominator[n].real());
 }
 
+void ButterworthFilter::PrintDiscreteTimeTF() {
+
+    int n = mOrder;
+
+    std::cout << "\nThe Discrete Time Transfer Function of the Filter is ;\n" << std::endl;
+
+    for (int i = n; i > 0; i--) {
+
+        printf("%4.3f *", mDiscreteTimeNumerator[n - i].real());
+        printf("z[-%d] + ", i);
+
+    }
+    printf("%4.3f", mDiscreteTimeNumerator[n].real());
+    std::cout << "\n";
+
+    for (int i = 0; i <= n; i++) {
+        std::cout << "--------";
+    }
+
+    std::cout << "--------\n";
+
+    for (int i = n; i > 0; i--) {
+
+        printf("%4.3f *", mDiscreteTimeDenominator[n - i].real());
+        printf("z[-%d] + ", i);
+
+    }
+
+    printf("%4.3f", mDiscreteTimeDenominator[n].real());
+}
