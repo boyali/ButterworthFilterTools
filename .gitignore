@@ -3,4 +3,11 @@
 
 cmake-build-debug/
 Docs/.ipynb_checkpoints
+lib/
 
+ButterworthFilterTools
+ButterworthFilterTools.cbp
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
