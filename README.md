@@ -63,6 +63,13 @@ The discrete transfer function method is called using ;
     bf.computeDiscreteTimeTF();
     bf.PrintDiscreteTimeTF();
     
+The results are printed on the screen like;
+    The Discrete Time Transfer Function of the Filter is ;
+    
+    0.278 *z[-2] + 0.278 *z[-1] + 0.000
+    --------------------------------
+    1.000 *z[-2] + -0.059 *z[-1] + 0.172
+    
 and the associated difference coefficients An and Bn by withing a struct ; 
 
     DifferenceAnBn AnBn = bf.getAnBn();
