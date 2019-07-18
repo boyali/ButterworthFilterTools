@@ -120,6 +120,42 @@ void ButterworthFilter::computeContinuousTimeTF() {
 
 }
 
+void ButterworthFilter::computeDiscreteTimeTF() {
+
+    // Resizes the roots and zeros to the new order of discrete time then fills the values by Bilinear Transformation
+    mDiscreteTimeZeros.resize(mOrder, {-1.0, 0.0}); // Butter puts zeros at -1.0 for causality
+    mDiscreteTimeRoots.resize(mOrder, {0.0, 0.0});
+
+    // Gain of the discrete time function
+    std::complex<double> gain{mContinuousTimeNumerator, 0.0};
+
+    // Bilinear Transformation of the Roots
+    int i = 0;
+    for (auto &&dr: mDiscreteTimeRoots) {
+        dr = (1.0 + 2.0 * mContinuousTimeRoots[i] / 2.0) / (1.0 - Td * mContinuousTimeRoots[i] / 2.0);
+
+        gain = gain / (1.0 - mContinuousTimeRoots[i]);
+        i++;
+    }
+
+
+
+    // Obtain the coefficients of numerator and denominator
+
+    mDiscreteTimeNumerator = poly(mDiscreteTimeZeros);
+    for (auto &&dn :mDiscreteTimeNumerator) {
+        dn = dn * gain;
+    }
+
+
+    mDiscreteTimeDenominator = poly(mDiscreteTimeRoots);
+
+
+    int p = 1;
+
+
+}
+
 Order_Cutoff ButterworthFilter::getOrderCutOff() {
 
     Order_Cutoff NWc{mOrder, mCutoff_Frequency};

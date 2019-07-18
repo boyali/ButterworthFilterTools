@@ -39,6 +39,9 @@ public:
     // computes continous time transfer function
     void computeContinuousTimeTF();
 
+    // computes continous time transfer function
+    void computeDiscreteTimeTF();
+
 private:
 
     // member variables
@@ -51,12 +54,23 @@ private:
     int mOrder = 0;                  // filter order
     double mCutoff_Frequency = 0.0;    // filter cut-off frequency [rad/sec]
 
+    const double Td = 2.0;
+
     // Continuous time transfer function roots
     std::vector<double> mPhaseAngles{0.0};
     std::vector<std::complex<double >> mContinuousTimeRoots{{0.0, 0.0}};
 
+    // Discrete time zeros and roots
+    std::vector<std::complex<double >> mDiscreteTimeRoots{{0.0, 0.0}};
+    std::vector<std::complex<double >> mDiscreteTimeZeros{{0.0, 0.0}};
+
+    // Continous time transfer function numerator denominators
     std::vector<std::complex<double>> mContinuousTimeDenominator{{0.0, 0.0}};
     double mContinuousTimeNumerator = 0.0;
+
+    // Discrete time transfer function numerator denominators
+    std::vector<std::complex<double>> mDiscreteTimeDenominator{{0.0, 0.0}};
+    std::vector<std::complex<double>> mDiscreteTimeNumerator{{0.0, 0.0}};
 
 
     // METHODS

@@ -41,6 +41,7 @@ int main() {
     // Get the computed order and Cut-off frequency
 
     Order_Cutoff NWc = bf.getOrderCutOff();
+
     cout << " The computed order is ;" << NWc.N << endl;
     cout << " The computed cut-off frequency is ;" << NWc.Wc << endl;
 
@@ -51,6 +52,9 @@ int main() {
     bf.computeContinuousTimeTF();
     bf.PrintFilter_ContinuousTimeRoots();
     bf.PrintContinuousTimeTF();
+
+    // Compute Discrete Time TF
+    bf.computeDiscreteTimeTF();
 
 
     return 0;
