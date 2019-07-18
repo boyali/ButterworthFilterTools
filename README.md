@@ -64,11 +64,11 @@ The discrete transfer function method is called using ;
     bf.PrintDiscreteTimeTF();
     
 The results are printed on the screen like;
-    The Discrete Time Transfer Function of the Filter is ;
-    
-    0.278 *z[-2] + 0.278 *z[-1] + 0.000
-    --------------------------------
-    1.000 *z[-2] + -0.059 *z[-1] + 0.172
+The Discrete Time Transfer Function of the Filter is ;
+
+    0.191 *z[-5] + 0.956 *z[-4] + 1.913 *z[-3] + 1.913 *z[-2] + 0.956 *z[-1] + 0.191
+    --------------------------------------------------------
+    1.000 *z[-5] + 1.885 *z[-4] + 1.888 *z[-3] + 1.014 *z[-2] + 0.298 *z[-1] + 0.037
     
 and the associated difference coefficients An and Bn by withing a struct ; 
 

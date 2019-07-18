@@ -74,8 +74,12 @@ int main() {
     cout << " The computed order is ;" << NWc.N << endl;
     cout << " The computed cut-off frequency is ;" << NWc.Wc << endl;
 
-
     bf.PrintFilter_Specs();
+
+    // TEST
+    // Setting filter order N and cut-off frequency explicitly (x-r1)(x-r2)
+//    bf.setOrder(2);
+//    bf.setCuttoffFrequency(10.0);
 
     // Compute Continous Time TF
     bf.computeContinuousTimeTF();
