@@ -3,11 +3,38 @@
 #include <cmath>
 #include <vector>
 #include <complex>
+#include <gtest/gtest.h>
 
 using namespace std;
 
-int main() {
 
+TEST(FilterSpecTest, Orderis2) {
+
+    ButterworthFilter bf;
+
+    bf.setOrder(2);
+    bf.setCuttoffFrequency(0.95107);
+
+    Order_Cutoff NWn = bf.getOrderCutOff();
+    EXPECT_EQ(2, NWn.N);
+
+}
+
+TEST(FilterSpecTest, WcTest) {
+
+    ButterworthFilter bf;
+
+    bf.setOrder(2);
+    bf.setCuttoffFrequency(0.95107);
+
+    Order_Cutoff NWn = bf.getOrderCutOff();
+    EXPECT_EQ(0.95107, NWn.Wc);
+
+}
+
+
+int main() {
+    testing::InitGoogleTest();
 
     double Wp, Ws, Ap, As;
 
@@ -30,10 +57,12 @@ int main() {
 
 
     // Setting filter order N and cut-off frequency explicitly (x-r1)(x-r2)
-
     bf.setOrder(2);
     bf.setCuttoffFrequency(2.0);
     bf.PrintFilter_Specs();
+
+
+
 
     // Computing filter coefficients from the specs
     bf.Buttord(Wp, Ws, Ap, As);
@@ -62,5 +91,5 @@ int main() {
     DifferenceAnBn AnBn = bf.getAnBn();
 
 
-    return 0;
+    return RUN_ALL_TESTS();
 }
