@@ -58,4 +58,20 @@ methods. The resulting screen output for a 5th order filter is demonstrated belo
 
 The digital filter equivalent from the continuous time definitions are produced by using the bilinear transformation. When creating the discrete time function of the ButterworthFilter object, its numerator (Bn) and Denominator (An) coeffients are stored in a vector of filter order size N.
 
+The discrete transfer function method is called using ;
+
+    bf.computeDiscreteTimeTF();
+    bf.PrintDiscreteTimeTF();
+    
+and the associated difference coefficients An and Bn by withing a struct ; 
+
+    DifferenceAnBn AnBn = bf.getAnBn();
+    
+ The difference coefficients appear in the filtering equation in the form of.  
  
+    An *Yfiltered = Bn * Yunfiltered  
+    
+ 
+ To filter a signal given in a vector form ; 
+ 
+    
