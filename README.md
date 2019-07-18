@@ -74,4 +74,9 @@ and the associated difference coefficients An and Bn by withing a struct ;
  
  To filter a signal given in a vector form ; 
  
+ 
+ Reference: 
+ 1 . Manolakis, Dimitris G., and Vinay K. Ingle. Applied digital signal processing: theory and practice. Cambridge University Press, 2011. 
+ 
+ 
     
