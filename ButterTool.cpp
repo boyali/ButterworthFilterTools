@@ -154,7 +154,7 @@ void ButterworthFilter::computeDiscreteTimeTF() {
         i++;
     }
 
-    int a = 1;
+
 
 }
 
@@ -167,9 +167,27 @@ Order_Cutoff ButterworthFilter::getOrderCutOff() {
 
 DifferenceAnBn ButterworthFilter::getAnBn() {
 
+//    DifferenceAnBn AnBn;
+//    AnBn.An.resize(mAn.size(), 0.0);
+//    AnBn.Bn.resize(mBn.size(), 0.0);
+//
+//    AnBn.An = mAn;
+//    AnBn.Bn = mBn;
+
     DifferenceAnBn AnBn{mAn, mBn};
 
+
     return AnBn;
+}
+
+std::vector<double> ButterworthFilter::getAn() {
+
+    return mAn;
+}
+
+std::vector<double> ButterworthFilter::getBn() {
+
+    return mBn;
 }
 
 void ButterworthFilter::PrintFilter_Specs() {
@@ -249,10 +267,4 @@ void ButterworthFilter::PrintDiscreteTimeTF() {
     printf("%4.3f", mDiscreteTimeDenominator[n].real());
     std::cout << "\n" << std::endl;
 
-//    for (int i = n; i > 0; i--) {
-//
-//        std::cout << "\n" << mDiscreteTimeDenominator[n - i].real() << std::endl;
-//
-//
-//    }
 }

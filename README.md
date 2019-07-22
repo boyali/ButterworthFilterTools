@@ -4,7 +4,7 @@ This Butterworth low-pass filter design tool can be used to design a Butterworth
 
 The Butterworth filter is a class implementation. The object is created by a default constructor without any argument. 
 
-The filter can be prepared in two ways. If the filter specifications are known such as passband, stopband frequencies (Wp and Ws) together with the passband and stopband ripple magnitudes (Ap and As), one can call the filter's buttord method with these arguments to obtain the recommended filter order (N) and cut-off frequency (Wc [rad/s]). An example call is demonstrated below;
+The filter can be prepared in two ways. If the filter specifications are known such as the passband, stopband frequencies (Wp and Ws) together with the passband and stopband ripple magnitudes (Ap and As), one can call the filter's buttord method with these arguments to obtain the recommended filter order (N) and cut-off frequency (Wc [rad/s]). An example call is demonstrated below;
 
 
     ButterworthFilter bf();
@@ -28,7 +28,7 @@ The filter order and cut-off frequency can be obtain in a struct using bf.getOrd
 If the user would like to define the order and cut-off frequency directly, the setter methods for these variables can  be called to set the filter order and the desired cut-off frequency for the filter.
 
 #### Obtaining Filter Transfer Functions
-The discrete transfer function of the filter requires the roots and gain of the continuous time transfer function. Therefore it is a must to call create the continuous time transfer of the method; 
+The discrete transfer function of the filter requires the roots and gain of the continuous time transfer function. Therefore it is a must to call first computeContinuousTimeTF to create the continuous time transfer of the method; 
     
     bf.computeContinuousTimeTF();
     

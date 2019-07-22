@@ -8,27 +8,71 @@
 using namespace std;
 
 
-TEST(FilterSpecTest, Orderis2) {
+TEST(FilterSpecTest, OrderTest) {
+
+
+    double Wp, Ws, Ap, As;
+
+
+    Wp = 2.0; // passband frequency [rad/sec]
+    Ws = 3.0; // stopband frequency [rad/sec]
+    Ap = 6.0; // passband ripple mag or loss [dB]
+    As = 20.0; // stop band rippe attenuation [dB]
 
     ButterworthFilter bf;
-
-    bf.setOrder(2);
-    bf.setCuttoffFrequency(0.95107);
+    bf.Buttord(Wp, Ws, Ap, As);
 
     Order_Cutoff NWn = bf.getOrderCutOff();
-    EXPECT_EQ(2, NWn.N);
+
+    ASSERT_EQ(5, NWn.N);
 
 }
 
-TEST(FilterSpecTest, WcTest) {
+TEST(FilterSpecTest, Cutoff_Test) {
+
+
+    double Wp, Ws, Ap, As;
+
+
+    Wp = 2.0; // passband frequency [rad/sec]
+    Ws = 3.0; // stopband frequency [rad/sec]
+    Ap = 6.0; // passband ripple mag or loss [dB]
+    As = 20.0; // stop band rippe attenuation [dB]
 
     ButterworthFilter bf;
-
-    bf.setOrder(2);
-    bf.setCuttoffFrequency(0.95107);
+    bf.Buttord(Wp, Ws, Ap, As);
 
     Order_Cutoff NWn = bf.getOrderCutOff();
-    EXPECT_EQ(0.95107, NWn.Wc);
+
+    ASSERT_NEAR(1.89478, NWn.Wc, 0.1);
+
+}
+
+TEST(TransferFunction, Discrete_TFTest) {
+
+
+    double Wp, Ws, Ap, As;
+
+
+    Wp = 2.0; // passband frequency [rad/sec]
+    Ws = 3.0; // stopband frequency [rad/sec]
+    Ap = 6.0; // passband ripple mag or loss [dB]
+    As = 20.0; // stop band rippe attenuation [dB]
+
+    ButterworthFilter bf;
+    bf.Buttord(Wp, Ws, Ap, As);
+
+    bf.computeContinuousTimeTF();
+    bf.computeDiscreteTimeTF();
+
+//    DifferenceAnBn AnBn = bf.getAnBn();
+
+    std::vector<double> An = bf.getAn();
+    std::vector<double> Bn = bf.getBn();
+
+    ASSERT_NEAR(0.29762, An[4], 0.01);
+    EXPECT_NEAR(0.9564, Bn[1], 0.01);
+
 
 }
 
@@ -93,6 +137,7 @@ int main() {
     // get An Bn
 
     DifferenceAnBn AnBn = bf.getAnBn();
+    int a = 1;
 
 
     return RUN_ALL_TESTS();

@@ -39,8 +39,11 @@ public:
 
     // Get the order, cut-off frequency and other filter properties
     Order_Cutoff getOrderCutOff();
-
     DifferenceAnBn getAnBn();
+
+    std::vector<double> getAn();
+
+    std::vector<double> getBn();
 
 
     // computes continous time transfer function
