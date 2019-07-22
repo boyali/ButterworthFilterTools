@@ -7,8 +7,22 @@
 
 using namespace std;
 
+// Create a textficture
 
-TEST(FilterSpecTest, OrderTest) {
+struct FilterTest : testing::Test {
+
+    ButterworthFilter *bf;
+
+    FilterTest() {
+        bf = new ButterworthFilter;
+    }
+
+    ~FilterTest() {
+        delete bf;
+    }
+};
+
+TEST_F(FilterTest, OrderTest) {
 
 
     double Wp, Ws, Ap, As;
@@ -19,16 +33,16 @@ TEST(FilterSpecTest, OrderTest) {
     Ap = 6.0; // passband ripple mag or loss [dB]
     As = 20.0; // stop band rippe attenuation [dB]
 
-    ButterworthFilter bf;
-    bf.Buttord(Wp, Ws, Ap, As);
 
-    Order_Cutoff NWn = bf.getOrderCutOff();
+    bf->Buttord(Wp, Ws, Ap, As);
+
+    Order_Cutoff NWn = bf->getOrderCutOff();
 
     ASSERT_EQ(5, NWn.N);
 
 }
 
-TEST(FilterSpecTest, Cutoff_Test) {
+TEST_F(FilterTest, Cutoff_Test) {
 
 
     double Wp, Ws, Ap, As;
@@ -39,16 +53,17 @@ TEST(FilterSpecTest, Cutoff_Test) {
     Ap = 6.0; // passband ripple mag or loss [dB]
     As = 20.0; // stop band rippe attenuation [dB]
 
-    ButterworthFilter bf;
-    bf.Buttord(Wp, Ws, Ap, As);
 
-    Order_Cutoff NWn = bf.getOrderCutOff();
+    bf->Buttord(Wp, Ws, Ap, As);
+
+    Order_Cutoff NWn = bf->getOrderCutOff();
 
     ASSERT_NEAR(1.89478, NWn.Wc, 0.1);
 
 }
 
-TEST(TransferFunction, Discrete_TFTest) {
+
+TEST_F(FilterTest, Discrete_TFTest) {
 
 
     double Wp, Ws, Ap, As;
@@ -59,16 +74,16 @@ TEST(TransferFunction, Discrete_TFTest) {
     Ap = 6.0; // passband ripple mag or loss [dB]
     As = 20.0; // stop band rippe attenuation [dB]
 
-    ButterworthFilter bf;
-    bf.Buttord(Wp, Ws, Ap, As);
 
-    bf.computeContinuousTimeTF();
-    bf.computeDiscreteTimeTF();
+    bf->Buttord(Wp, Ws, Ap, As);
+
+    bf->computeContinuousTimeTF();
+    bf->computeDiscreteTimeTF();
 
 //    DifferenceAnBn AnBn = bf.getAnBn();
 
-    std::vector<double> An = bf.getAn();
-    std::vector<double> Bn = bf.getBn();
+    std::vector<double> An = bf->getAn();
+    std::vector<double> Bn = bf->getBn();
 
     ASSERT_NEAR(0.29762, An[4], 0.01);
     EXPECT_NEAR(0.9564, Bn[1], 0.01);

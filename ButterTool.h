@@ -42,7 +42,6 @@ public:
     DifferenceAnBn getAnBn();
 
     std::vector<double> getAn();
-
     std::vector<double> getBn();
 
 

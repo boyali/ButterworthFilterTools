@@ -97,7 +97,7 @@ void ButterworthFilter::computeContinuousTimeRoots() {
     //First compute  the phase angles of the roots
     computePhaseAngles();
 
-    mContinuousTimeRoots.resize(mOrder);
+    mContinuousTimeRoots.resize(mOrder, {0.0, 0.0});
     int i = 0;
 
     for (auto &&x:mContinuousTimeRoots) {
@@ -110,7 +110,7 @@ void ButterworthFilter::computeContinuousTimeRoots() {
 void ButterworthFilter::computeContinuousTimeTF() {
 
     computeContinuousTimeRoots();
-    mContinuousTimeDenominator.resize(mOrder + 1);
+    mContinuousTimeDenominator.resize(mOrder + 1, {0.0, 0.0});
 
     mContinuousTimeDenominator = poly(mContinuousTimeRoots);
     mContinuousTimeNumerator = pow(mCutoff_Frequency, mOrder);
