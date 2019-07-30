@@ -3,12 +3,97 @@
 #include <cmath>
 #include <vector>
 #include <complex>
+#include <gtest/gtest.h>
 
 using namespace std;
 
+// Create a textficture
+
+struct FilterTest : testing::Test {
+
+    ButterworthFilter *bf;
+
+    FilterTest() {
+        bf = new ButterworthFilter;
+    }
+
+    ~FilterTest() {
+        delete bf;
+    }
+};
+
+TEST_F(FilterTest, OrderTest) {
+
+
+    double Wp, Ws, Ap, As;
+
+
+    Wp = 2.0; // passband frequency [rad/sec]
+    Ws = 3.0; // stopband frequency [rad/sec]
+    Ap = 6.0; // passband ripple mag or loss [dB]
+    As = 20.0; // stop band rippe attenuation [dB]
+
+
+    bf->Buttord(Wp, Ws, Ap, As);
+
+    Order_Cutoff NWn = bf->getOrderCutOff();
+
+    ASSERT_EQ(5, NWn.N);
+
+}
+
+TEST_F(FilterTest, Cutoff_Test) {
+
+
+    double Wp, Ws, Ap, As;
+
+
+    Wp = 2.0; // passband frequency [rad/sec]
+    Ws = 3.0; // stopband frequency [rad/sec]
+    Ap = 6.0; // passband ripple mag or loss [dB]
+    As = 20.0; // stop band rippe attenuation [dB]
+
+
+    bf->Buttord(Wp, Ws, Ap, As);
+
+    Order_Cutoff NWn = bf->getOrderCutOff();
+
+    ASSERT_NEAR(1.89478, NWn.Wc, 0.1);
+
+}
+
+
+TEST_F(FilterTest, Discrete_TFTest) {
+
+
+    double Wp, Ws, Ap, As;
+
+
+    Wp = 2.0; // passband frequency [rad/sec]
+    Ws = 3.0; // stopband frequency [rad/sec]
+    Ap = 6.0; // passband ripple mag or loss [dB]
+    As = 20.0; // stop band rippe attenuation [dB]
+
+
+    bf->Buttord(Wp, Ws, Ap, As);
+
+    bf->computeContinuousTimeTF();
+    bf->computeDiscreteTimeTF();
+
+//    DifferenceAnBn AnBn = bf.getAnBn();
+
+    std::vector<double> An = bf->getAn();
+    std::vector<double> Bn = bf->getBn();
+
+    ASSERT_NEAR(0.29762, An[4], 0.01);
+    EXPECT_NEAR(0.9564, Bn[1], 0.01);
+
+
+}
+
 
 int main() {
-
+    testing::InitGoogleTest();
 
     double Wp, Ws, Ap, As;
 
@@ -67,9 +152,6 @@ int main() {
     // get An Bn
 
     DifferenceAnBn AnBn = bf.getAnBn();
-    std::vector<double> An = bf.getAn();
-    std::vector<double> Bn = bf.getBn();
 
-
-    return 0;
+    return RUN_ALL_TESTS();
 }

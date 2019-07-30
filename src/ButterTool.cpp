@@ -7,7 +7,7 @@
 #include <string>
 #include <cstdio>
 
-#include "ButterTool.h"
+#include "../include/ButterTool.h"
 
 
 
@@ -122,12 +122,12 @@ void ButterworthFilter::computeDiscreteTimeTF() {
     // Resizes the roots and zeros to the new order of discrete time then fills the values by Bilinear Transformation
     mDiscreteTimeZeros.resize(mOrder, {-1.0, 0.0}); // Butter puts zeros at -1.0 for causality
     mDiscreteTimeRoots.resize(mOrder, {0.0, 0.0});
-    mAn.resize(mOrder, 0.0);
-    mBn.resize(mOrder, 0.0);
+    mAn.resize(mOrder + 1, 0.0);
+    mBn.resize(mOrder + 1, 0.0);
 
     mDiscreteTimeGain = {mContinuousTimeNumerator, 0.0};
 
-    // Bilinear Transformation of the Roots
+    // Bi-linear Transformation of the Roots
     int i = 0;
     for (auto &&dr: mDiscreteTimeRoots) {
         dr = (1.0 + 2.0 * mContinuousTimeRoots[i] / 2.0) / (1.0 - Td * mContinuousTimeRoots[i] / 2.0);

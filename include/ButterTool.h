@@ -83,7 +83,7 @@ private:
     std::vector<std::complex<double>> mDiscreteTimeDenominator{{0.0, 0.0}};
     std::vector<std::complex<double>> mDiscreteTimeNumerator{{0.0, 0.0}};
 
-    // Numerator and Denominator Coefficients Bn and An
+    // Numerator and Denominator Coefficients Bn and An of Discrete Time Filter
 
     std::vector<double> mAn{0.0};
     std::vector<double> mBn{0.0};
