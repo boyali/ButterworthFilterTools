@@ -70,10 +70,7 @@ int main()
     bf.setCuttoffFrequency(2.0);
     bf.PrintFilter_Specs();
 
-    // Computing filter coefficients from the specs
-    bf.Buttord(Wp, Ws, Ap, As);
-
-    // Get the computed order and Cut-off frequency
+     // Get the computed order and Cut-off frequency
     /*
      * In the previous command line, given the filter specisifications in the continous time are used to compute the
      * filter order N and cut-off frequency. These variables are stored in the object's private vars. To get it, the
@@ -110,7 +107,7 @@ int main()
     bf.PrintFilter_Specs();
 
 
-    // Compute Continous Time TF
+    // Compute Continuous Time TF
     bool use_sampling_frequency = true;
     bf.computeContinuousTimeTF(use_sampling_frequency);
     bf.PrintFilter_ContinuousTimeRoots();
