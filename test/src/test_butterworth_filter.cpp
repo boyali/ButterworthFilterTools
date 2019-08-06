@@ -74,6 +74,7 @@ TEST_F(TestSuite, OrderTest)
 
     ASSERT_NEAR(0.067455, Bn[0], 0.01);
     ASSERT_NEAR(0.134911, Bn[1], 0.01);
+
     ASSERT_NEAR(0.067455, Bn[2], 0.01);
 
 }
