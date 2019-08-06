@@ -31,6 +31,8 @@ int main()
      *      bf.computeDiscreteTimeTF();
      * */
 
+
+    // 1st Method
     double Wp, Ws, Ap, As;
 
     Wp = 2.0;  // passband frequency [rad/sec]
@@ -39,6 +41,19 @@ int main()
     As = 20.0; // stop band rippe attenuation [dB]
 
     ButterworthFilter bf;
+    Order_Cutoff NWc = bf.getOrderCutOff();
+
+    cout << " The computed order is ;" << NWc.N << endl;
+    cout << " The computed cut-off frequency is ;" << NWc.Wc << endl;
+
+    // Compute Continous Time TF
+    bf.computeContinuousTimeTF();
+    bf.PrintFilter_ContinuousTimeRoots();
+    bf.PrintContinuousTimeTF();
+
+    // Compute Discrete Time TF
+    bf.computeDiscreteTimeTF();
+    bf.PrintDiscreteTimeTF();
 
     /*
      * After creating a filter object, you can explicitly set the order N and cutOff frequency to get the filter
@@ -48,6 +63,8 @@ int main()
      *
      * */
 
+
+    // 2nd METHOD
     // Setting filter order N and cut-off frequency explicitly (x-r1)(x-r2)
     bf.setOrder(2);
     bf.setCuttoffFrequency(2.0);
@@ -63,7 +80,7 @@ int main()
      * following getter method is used.
      *
      * */
-    Order_Cutoff NWc = bf.getOrderCutOff();
+    NWc = bf.getOrderCutOff();
 
     cout << " The computed order is ;" << NWc.N << endl;
     cout << " The computed cut-off frequency is ;" << NWc.Wc << endl;
@@ -84,6 +101,25 @@ int main()
     // Compute Discrete Time TF
     bf.computeDiscreteTimeTF();
     bf.PrintDiscreteTimeTF();
+
+
+
+    // 3rd METHOD defining a sampling frequency together with the cut-off fc, fs
+    bf.setOrder(2);
+    bf.setCuttoffFrequency(10, 100);
+    bf.PrintFilter_Specs();
+
+
+    // Compute Continous Time TF
+    bool use_sampling_frequency = true;
+    bf.computeContinuousTimeTF(use_sampling_frequency);
+    bf.PrintFilter_ContinuousTimeRoots();
+    bf.PrintContinuousTimeTF();
+
+    // Compute Discrete Time TF
+    bf.computeDiscreteTimeTF(use_sampling_frequency);
+    bf.PrintDiscreteTimeTF();
+
 
     // get An and Bn usign the getters
     DifferenceAnBn AnBn = bf.getAnBn();

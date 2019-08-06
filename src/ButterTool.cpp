@@ -34,10 +34,8 @@ void ButterworthFilter::Buttord(double Wp, double Ws, double Ap, double As)
      * frequency whereas Matlab gives right limit
      *
      * */
-    double right_lim =
-            Ws * (pow((pow(10.0, As / 10.0) - 1.0), -1.0 / (2 * mOrder)));
-    double left_lim =
-            Wp * (pow((pow(10.0, Ap / 10.0) - 1.0), -1.0 / (2 * mOrder)));
+    double right_lim = Ws * (pow((pow(10.0, As / 10.0) - 1.0), -1.0 / (2 * mOrder)));
+    double left_lim = Wp * (pow((pow(10.0, Ap / 10.0) - 1.0), -1.0 / (2 * mOrder)));
 
     // mCutoff_Frequency = left_lim;
     setCuttoffFrequency(right_lim);
@@ -57,8 +55,12 @@ void ButterworthFilter::setCuttoffFrequency(double fc, double fs)
      * fc is the cut-off frequency in [Hz]
      * fs is the sampling frequency in [Hz]
      * */
-
-    mCutoff_Frequency = fc * M_2_PI;
+    if(fc >= fs / 2)
+    {
+        std::cout << "\n  ERROR: Cut-off frequency  fc must be less than fs/2 \n";
+        _Exit(0);
+    }
+    mCutoff_Frequency = fc * 2.0 * M_PI;
     mSampling_Frequency = fs;
 }
 
@@ -111,12 +113,12 @@ void ButterworthFilter::computeContinuousTimeRoots(bool use_sampling_freqency)
     if(use_sampling_freqency)
     {
         std::cout << "\n Sampling Frequency is used to compute pre-warped frequency \n" << std::endl;
-        double Fc = (mSampling_Frequency / M_1_PI) * tan(M_1_PI * mCutoff_Frequency / mSampling_Frequency);
+        double Fc = (mSampling_Frequency / M_PI) * tan(mCutoff_Frequency / (mSampling_Frequency * 2.0));
 
         for (auto &&x : mContinuousTimeRoots)
         {
-            x = {mCutoff_Frequency * cos(mPhaseAngles[i]) * M_2_PI * Fc,
-                 mCutoff_Frequency * sin(mPhaseAngles[i]) * M_2_PI * Fc};
+            x = {cos(mPhaseAngles[i]) * Fc * 2.0 * M_PI,
+                 sin(mPhaseAngles[i]) * Fc * 2.0 * M_PI};
             i++;
         }
 
@@ -133,17 +135,17 @@ void ButterworthFilter::computeContinuousTimeRoots(bool use_sampling_freqency)
 
 }
 
-void ButterworthFilter::computeContinuousTimeTF(bool sampling_freqency)
+void ButterworthFilter::computeContinuousTimeTF(bool use_sampling_freqency)
 {
 
-    computeContinuousTimeRoots(sampling_freqency);
+    computeContinuousTimeRoots(use_sampling_freqency);
     mContinuousTimeDenominator.resize(mOrder + 1, {0.0, 0.0});
 
     mContinuousTimeDenominator = poly(mContinuousTimeRoots);
     mContinuousTimeNumerator = pow(mCutoff_Frequency, mOrder);
 }
 
-void ButterworthFilter::computeDiscreteTimeTF(bool sampling_freqency)
+void ButterworthFilter::computeDiscreteTimeTF(bool use_sampling_freqency)
 {
     /* @brief
      * This method assumes the continous time transfer function of filter has already been computed and stored in the
@@ -162,34 +164,83 @@ void ButterworthFilter::computeDiscreteTimeTF(bool sampling_freqency)
 
     // Bi-linear Transformation of the Roots
     int i = 0;
-    for (auto &&dr : mDiscreteTimeRoots)
-    {
-        dr = (1.0 + 2.0 * mContinuousTimeRoots[i] / 2.0) /
-             (1.0 - Td * mContinuousTimeRoots[i] / 2.0);
 
-        mDiscreteTimeGain = mDiscreteTimeGain / (1.0 - mContinuousTimeRoots[i]);
-        i++;
+    if(use_sampling_freqency)
+    {
+        for (auto &&dr : mDiscreteTimeRoots)
+        {
+            dr = (1.0 + mContinuousTimeRoots[i] / (mSampling_Frequency * 2.0)) /
+                 (1.0 - mContinuousTimeRoots[i] / (mSampling_Frequency * 2.0));
+            i++;
+        }
+
+        mDiscreteTimeDenominator = poly(mDiscreteTimeRoots);
+
+        // Obtain the coefficients of numerator and denominator
+        i = 0;
+        mDiscreteTimeNumerator = poly(mDiscreteTimeZeros);
+
+        // Compute Discrete Time Gain
+        std::complex<double> sum_num{0.0, 0.0};
+        std::complex<double> sum_den{0.0, 0.0};
+
+        for (auto &n : mDiscreteTimeNumerator)
+        {
+            sum_num += n;
+        }
+
+        for (auto &n : mDiscreteTimeDenominator)
+        {
+            sum_den += n;
+        }
+
+        mDiscreteTimeGain = (sum_den / sum_num);
+
+        for (auto &&dn : mDiscreteTimeNumerator)
+        {
+            dn = dn * mDiscreteTimeGain;
+            mBn[i] = dn.real();
+            i++;
+        }
+
+        i = 0;
+        for (auto &&dd : mDiscreteTimeDenominator)
+        {
+            mAn[i] = dd.real();
+            i++;
+        }
+    } else
+    {
+        for (auto &&dr : mDiscreteTimeRoots)
+        {
+            dr = (1.0 + 2.0 * mContinuousTimeRoots[i] / 2.0) /
+                 (1.0 - Td * mContinuousTimeRoots[i] / 2.0);
+
+            mDiscreteTimeGain = mDiscreteTimeGain / (1.0 - mContinuousTimeRoots[i]);
+            i++;
+        }
+
+        mDiscreteTimeDenominator = poly(mDiscreteTimeRoots);
+
+        // Obtain the coefficients of numerator and denominator
+        i = 0;
+        mDiscreteTimeNumerator = poly(mDiscreteTimeZeros);
+
+        for (auto &&dn : mDiscreteTimeNumerator)
+        {
+            dn = dn * mDiscreteTimeGain;
+            mBn[i] = dn.real();
+            i++;
+        }
+
+        i = 0;
+        for (auto &&dd : mDiscreteTimeDenominator)
+        {
+            mAn[i] = dd.real();
+            i++;
+        }
     }
 
-    mDiscreteTimeDenominator = poly(mDiscreteTimeRoots);
-
-    // Obtain the coefficients of numerator and denominator
-    i = 0;
-    mDiscreteTimeNumerator = poly(mDiscreteTimeZeros);
-
-    for (auto &&dn : mDiscreteTimeNumerator)
-    {
-        dn = dn * mDiscreteTimeGain;
-        mBn[i] = dn.real();
-        i++;
-    }
-
-    i = 0;
-    for (auto &&dd : mDiscreteTimeDenominator)
-    {
-        mAn[i] = dd.real();
-        i++;
-    }
 }
 
 Order_Cutoff ButterworthFilter::getOrderCutOff()

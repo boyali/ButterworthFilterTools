@@ -5,20 +5,20 @@
 #include <complex>
 #include <gtest/gtest.h>
 
-
-class TestSuite : public ::testing::Test {
+class TestSuite : public ::testing::Test
+{
 public:
-    TestSuite() {}
+    TestSuite()
+    {}
 
-    ~TestSuite() {}
+    ~TestSuite()
+    {}
 };
 
-
-TEST_F(TestSuite, OrderTest) {
-
+TEST_F(TestSuite, OrderTest)
+{
 
     double Wp, Ws, Ap, As;
-
 
     Wp = 2.0; // passband frequency [rad/sec]
     Ws = 3.0; // stopband frequency [rad/sec]
@@ -52,16 +52,34 @@ TEST_F(TestSuite, OrderTest) {
     ASSERT_NEAR(0.29762, An[4], 0.01);
     ASSERT_NEAR(0.0365, An[5], 0.01);
 
-
     ASSERT_NEAR(0.9564, Bn[1], 0.01);
     ASSERT_NEAR(1.9128, Bn[2], 0.01);
     ASSERT_NEAR(1.9128, Bn[3], 0.01);
     ASSERT_NEAR(0.9564, Bn[4], 0.01);
     ASSERT_NEAR(0.1913, Bn[5], 0.01);
 
+    // Test with defined sampling frequency
+    bool use_sampling_frequency = true;
+    bf.setOrder(2);
+    bf.setCuttoffFrequency(10, 100);
+    bf.computeContinuousTimeTF(use_sampling_frequency);
+    bf.computeDiscreteTimeTF(use_sampling_frequency);
+
+    An = bf.getAn();
+    Bn = bf.getBn();
+
+    ASSERT_NEAR(1.0, An[0], 0.01);
+    ASSERT_NEAR(-1.14298, An[1], 0.01);
+    ASSERT_NEAR(0.4128, An[2], 0.01);
+
+    ASSERT_NEAR(0.067455, Bn[0], 0.01);
+    ASSERT_NEAR(0.134911, Bn[1], 0.01);
+    ASSERT_NEAR(0.067455, Bn[2], 0.01);
+
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     testing::InitGoogleTest(&argc, argv);
 
     return RUN_ALL_TESTS();
