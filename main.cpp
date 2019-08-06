@@ -14,23 +14,23 @@ int main()
      * The filter tool can be used in the following ways.
      *   1- Defining specs Wp, Ws, Ap, As and obtaining order and cut-off frequency (rad/sec)
      *      ButterworthFilter bf;
-     *      bf.Buttord(Wp, Ws, Ap, As);
+     *      bf.Buttord(Wp, Ws, Ap, As); Wp and Ws in [rad/sec]
      *      bf.computeContinuousTimeTF();
      *      bf.computeDiscreteTimeTF();
      *
      *   2- Defining the order and cut-off frequency (rad/sec) directly and computing the filter TFs
-     *      bf.setOrder(2);
-     *      bf.setCuttoffFrequency(2.0);
+     *      bf.setOrder(N); N is integer
+     *      bf.setCuttoffFrequency(Wc); Wc in [rad/sec]
      *      bf.computeContinuousTimeTF();
      *      bf.computeDiscreteTimeTF();
      *
      *   3- Defining the order N, cut-off and sampling frequencies (Hz)
-     *
-     *
-     *
-     *
-     *
+     *      bf.setOrder(N); N is integer
+     *      bf.setCuttoffFrequency_Hz(fc, fs); cut-off fc and sampling fs are in [Hz]
+     *      bf.computeContinuousTimeTF();
+     *      bf.computeDiscreteTimeTF();
      * */
+
     double Wp, Ws, Ap, As;
 
     Wp = 2.0;  // passband frequency [rad/sec]

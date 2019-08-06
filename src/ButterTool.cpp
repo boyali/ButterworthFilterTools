@@ -46,9 +46,20 @@ void ButterworthFilter::Buttord(double Wp, double Ws, double Ap, double As)
 void ButterworthFilter::setOrder(int N)
 { mOrder = N; }
 
-void ButterworthFilter::setCuttoffFrequency(double val)
+void ButterworthFilter::setCuttoffFrequency(double Wc)
 {
-    mCutoff_Frequency = val;
+    mCutoff_Frequency = Wc;
+}
+
+void ButterworthFilter::setCuttoffFrequency(double fc, double fs)
+{
+    /*
+     * fc is the cut-off frequency in [Hz]
+     * fs is the sampling frequency in [Hz]
+     * */
+
+    mCutoff_Frequency = fc * M_2_PI;
+    mSampling_Frequency = fs;
 }
 
 std::vector<std::complex<double>>
@@ -88,7 +99,7 @@ void ButterworthFilter::computePhaseAngles()
     }
 }
 
-void ButterworthFilter::computeContinuousTimeRoots()
+void ButterworthFilter::computeContinuousTimeRoots(bool use_sampling_freqency)
 {
 
     // First compute  the phase angles of the roots
@@ -97,25 +108,42 @@ void ButterworthFilter::computeContinuousTimeRoots()
     mContinuousTimeRoots.resize(mOrder, {0.0, 0.0});
     int i = 0;
 
-    for (auto &&x : mContinuousTimeRoots)
+    if(use_sampling_freqency)
     {
-        x = {mCutoff_Frequency * cos(mPhaseAngles[i]),
-             mCutoff_Frequency * sin(mPhaseAngles[i])};
-        i++;
+        std::cout << "\n Sampling Frequency is used to compute pre-warped frequency \n" << std::endl;
+        double Fc = (mSampling_Frequency / M_1_PI) * tan(M_1_PI * mCutoff_Frequency / mSampling_Frequency);
+
+        for (auto &&x : mContinuousTimeRoots)
+        {
+            x = {mCutoff_Frequency * cos(mPhaseAngles[i]) * M_2_PI * Fc,
+                 mCutoff_Frequency * sin(mPhaseAngles[i]) * M_2_PI * Fc};
+            i++;
+        }
+
+    } else
+    {
+        for (auto &&x : mContinuousTimeRoots)
+        {
+            x = {mCutoff_Frequency * cos(mPhaseAngles[i]),
+                 mCutoff_Frequency * sin(mPhaseAngles[i])};
+            i++;
+        }
+
     }
+
 }
 
-void ButterworthFilter::computeContinuousTimeTF()
+void ButterworthFilter::computeContinuousTimeTF(bool sampling_freqency)
 {
 
-    computeContinuousTimeRoots();
+    computeContinuousTimeRoots(sampling_freqency);
     mContinuousTimeDenominator.resize(mOrder + 1, {0.0, 0.0});
 
     mContinuousTimeDenominator = poly(mContinuousTimeRoots);
     mContinuousTimeNumerator = pow(mCutoff_Frequency, mOrder);
 }
 
-void ButterworthFilter::computeDiscreteTimeTF()
+void ButterworthFilter::computeDiscreteTimeTF(bool sampling_freqency)
 {
     /* @brief
      * This method assumes the continous time transfer function of filter has already been computed and stored in the

@@ -34,7 +34,10 @@ public:
     void Buttord(double Wp, double Ws, double Ap, double As);
 
     // Setters and Getters
-    void setCuttoffFrequency(double val);
+    void setCuttoffFrequency(double Wc); // Wc is the cut-off frequency in [rad/sec]
+
+    // fc is cut-off frequency in [Hz] and fs is the sampling frequency in [Hz]
+    void setCuttoffFrequency(double fc, double fs);
     void setOrder(int N);
 
     // Get the order, cut-off frequency and other filter properties
@@ -45,10 +48,10 @@ public:
     std::vector<double> getBn();
 
     // computes continous time transfer function
-    void computeContinuousTimeTF();
+    void computeContinuousTimeTF(bool sampling_freqency = false);
 
     // computes continous time transfer function
-    void computeDiscreteTimeTF();
+    void computeDiscreteTimeTF(bool sampling_freqency = false);
 
 private:
     // member variables
@@ -62,6 +65,10 @@ private:
 
     int mOrder = 0;                 // filter order
     double mCutoff_Frequency = 0.0; // filter cut-off frequency [rad/sec]
+
+    // Boolean parameter when a sampling frequency is defined. Default is false
+    bool prewarp = false;
+    double mSampling_Frequency = 1.0;
 
     const double Td = 2.0;
     // Gain of the discrete time function
@@ -109,5 +116,6 @@ private:
     void computePhaseAngles();
 
     // Computes continuous time roots from the phase angles
-    void computeContinuousTimeRoots();
+    void computeContinuousTimeRoots(bool use_sampling_freqency = false);
+
 };
