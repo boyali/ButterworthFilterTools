@@ -1,133 +1,117 @@
 #include "include/ButterTool.h"
 #include <cmath>
 #include <complex>
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
-using namespace std;
+
+/** The filter tool can be used in the following ways.
+ *
+ * 1- Defining specs Wp, Ws, Ap, As and obtaining order and cut-off frequency (rad/sec)
+ *      ButterworthFilter bf;
+ *      bf.Buttord(Wp, Ws, Ap, As); Wp and Ws in [rad/sec]
+ *      bf.computeContinuousTimeTF();
+ *      bf.computeDiscreteTimeTF();
+ *
+ *   2- Defining the order and cut-off frequency (rad/sec) directly and computing the filter TFs
+ *      bf.setOrder(N); N is integer
+ *      bf.setCuttoffFrequency(Wc); Wc in [rad/sec]
+ *      bf.computeContinuousTimeTF();
+ *      bf.computeDiscreteTimeTF();
+ *
+ *   3- Defining the order N, cut-off and sampling frequencies (Hz)
+ *      bf.setOrder(N); N is integer
+ *      bf.setCuttoffFrequency_Hz(fc, fs); cut-off fc and sampling fs are in [Hz]
+ *      bf.computeContinuousTimeTF();
+ *      bf.computeDiscreteTimeTF();
+ * */
 
 int main()
 {
+  // 1st Method
+  double Wp{2.};   // pass-band frequency [rad/sec]
+  double Ws{3.};   // stop-band frequency [rad/sec]
+  double Ap{6.};   // pass-band ripple mag or loss [dB]
+  double As{20.};  // stop band ripple attenuation [dB]
 
+  ButterworthFilter bf1;
+  bf1.Buttord(Wp, Ws, Ap, As);
 
-    /*
-     * The filter tool can be used in the following ways.
-     *   1- Defining specs Wp, Ws, Ap, As and obtaining order and cut-off frequency (rad/sec)
-     *      ButterworthFilter bf;
-     *      bf.Buttord(Wp, Ws, Ap, As); Wp and Ws in [rad/sec]
-     *      bf.computeContinuousTimeTF();
-     *      bf.computeDiscreteTimeTF();
-     *
-     *   2- Defining the order and cut-off frequency (rad/sec) directly and computing the filter TFs
-     *      bf.setOrder(N); N is integer
-     *      bf.setCuttoffFrequency(Wc); Wc in [rad/sec]
-     *      bf.computeContinuousTimeTF();
-     *      bf.computeDiscreteTimeTF();
-     *
-     *   3- Defining the order N, cut-off and sampling frequencies (Hz)
-     *      bf.setOrder(N); N is integer
-     *      bf.setCuttoffFrequency_Hz(fc, fs); cut-off fc and sampling fs are in [Hz]
-     *      bf.computeContinuousTimeTF();
-     *      bf.computeDiscreteTimeTF();
-     * */
+  auto NWc = bf1.getOrderCutOff();
+  print("The computed order and frequency for the give specification : ");
+  print("Minimum order N = ", NWc.N, ", and The cut-off frequency Wc = ", NWc.Wc, "rad/sec \n");
+  bf1.printFilterSpecs();
 
+  /**
+   * Approximate the continuous and discrete time transfer functions.
+   * */
+  bf1.computeContinuousTimeTF();
 
-    // 1st Method
-    double Wp, Ws, Ap, As;
+  // Print continuous time roots.
+  bf1.printFilterContinuousTimeRoots();
+  bf1.printContinuousTimeTF();
 
-    Wp = 2.0;  // passband frequency [rad/sec]
-    Ws = 3.0;  // stopband frequency [rad/sec]
-    Ap = 6.0;  // passband ripple mag or loss [dB]
-    As = 20.0; // stop band rippe attenuation [dB]
+  // Compute the discrete time transfer function.
+  bf1.computeDiscreteTimeTF();
+  bf1.printDiscreteTimeTF();
 
-    ButterworthFilter bf;
-    Order_Cutoff NWc = bf.getOrderCutOff();
+  // 2nd METHOD
+  // Setting filter order N and cut-off frequency explicitly
+  print("SECOND TYPE of FILTER INITIALIZATION ");
 
-    cout << " The computed order is ;" << NWc.N << endl;
-    cout << " The computed cut-off frequency is ;" << NWc.Wc << endl;
+  ButterworthFilter bf2;
+  bf2.setOrder(2);
+  bf2.setCuttoffFrequency(2.0);
+  bf2.printFilterSpecs();
 
-    // Compute Continous Time TF
-    bf.computeContinuousTimeTF();
-    bf.PrintFilter_ContinuousTimeRoots();
-    bf.PrintContinuousTimeTF();
+  // Get the computed order and Cut-off frequency
+  NWc = bf2.getOrderCutOff();
 
-    // Compute Discrete Time TF
-    bf.computeDiscreteTimeTF();
-    bf.PrintDiscreteTimeTF();
+  // Print continuous time roots.
+  bf2.computeContinuousTimeTF();
+  bf2.printFilterContinuousTimeRoots();
+  bf2.printContinuousTimeTF();
 
-    /*
-     * After creating a filter object, you can explicitly set the order N and cutOff frequency to get the filter
-     * transfer functions;  filter.setOrder(int N), filter.setCutoffFrequency(double Wc).
-     *
-     * Or can compute these quantities by calling the buttord method; filter.Buttord(Wp, Ws, Ap, As)
-     *
-     * */
+  // Compute the discrete time transfer function.
+  bf2.computeDiscreteTimeTF();
+  bf2.printDiscreteTimeTF();
 
+  // 3rd METHOD
+  // defining a sampling frequency together with the cut-off fc, fs
+  print("THIRD TYPE of FILTER INITIALIZATION ");
 
-    // 2nd METHOD
-    // Setting filter order N and cut-off frequency explicitly (x-r1)(x-r2)
-    bf.setOrder(2);
-    bf.setCuttoffFrequency(2.0);
-    bf.PrintFilter_Specs();
+  ButterworthFilter bf3;
+  bf3.setOrder(2);
 
-     // Get the computed order and Cut-off frequency
-    /*
-     * In the previous command line, given the filter specisifications in the continous time are used to compute the
-     * filter order N and cut-off frequency. These variables are stored in the object's private vars. To get it, the
-     * following getter method is used.
-     *
-     * */
-    NWc = bf.getOrderCutOff();
+  bf3.setCuttoffFrequency(10, 100);
+  bf3.printFilterSpecs();
 
-    cout << " The computed order is ;" << NWc.N << endl;
-    cout << " The computed cut-off frequency is ;" << NWc.Wc << endl;
+  bool use_sampling_frequency{true};
 
-    // Prints filter specs
-    bf.PrintFilter_Specs();
+  bf3.computeContinuousTimeTF(use_sampling_frequency);
+  bf3.printFilterContinuousTimeRoots();
+  bf3.printContinuousTimeTF();
 
-    /*
-     * Once the filter order N and the cut-off frequency computed and stored in
-     * the object,
-     *
-     * */
-    // Compute Continous Time TF
-    bf.computeContinuousTimeTF();
-    bf.PrintFilter_ContinuousTimeRoots();
-    bf.PrintContinuousTimeTF();
+  // Compute Discrete Time TF
+  bf3.computeDiscreteTimeTF(use_sampling_frequency);
+  bf3.printDiscreteTimeTF();
 
-    // Compute Discrete Time TF
-    bf.computeDiscreteTimeTF();
-    bf.PrintDiscreteTimeTF();
+  auto AnBn = bf3.getAnBn();
+  auto An = bf3.getAn();
+  auto Bn = bf3.getBn();
 
+  print("An : ");
 
+  for (double it : An) {
+    std::cout << std::setprecision(4) << it << ", ";
+  }
 
-    // 3rd METHOD defining a sampling frequency together with the cut-off fc, fs
-    bf.setOrder(2);
-    bf.setCuttoffFrequency(10, 100);
-    bf.PrintFilter_Specs();
+  print("\nBn : \n");
 
+  for (double it : Bn) {
+    std::cout << std::setprecision(4) << it << ", ";
+  }
 
-    // Compute Continuous Time TF
-    bool use_sampling_frequency = true;
-    bf.computeContinuousTimeTF(use_sampling_frequency);
-    bf.PrintFilter_ContinuousTimeRoots();
-    bf.PrintContinuousTimeTF();
-
-    // Compute Discrete Time TF
-    bf.computeDiscreteTimeTF(use_sampling_frequency);
-    bf.PrintDiscreteTimeTF();
-
-
-    // get An and Bn usign the getters
-    DifferenceAnBn AnBn = bf.getAnBn();
-    std::vector<double> An = bf.getAn();
-    std::vector<double> Bn = bf.getBn();
-
-    /*
-     * This is the last method by which the discrete time numerator and Bd and denominator Ad of discrete-time filter
-     * transfer function can be obtained.
-     *
-     * */
-
-    return 0;
+  return 0;
 }

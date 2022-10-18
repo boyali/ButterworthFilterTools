@@ -4,118 +4,123 @@
 
 #pragma once
 
+
 #include <cmath>
 #include <complex>
+#include <iomanip>
+#include <iostream>
 #include <vector>
 
-struct Order_Cutoff
+template <typename T>
+const T & append_separator(const T & arg)
 {
-    int N;
-    double Wc;
+  std::cout << " ";
+  return arg;
+}
+
+template <typename... Args>
+void print(Args &&... args)
+{
+  (std::cout << ... << append_separator(args)) << "\n";
+}
+
+struct sOrderCutoff
+{
+  int N{};
+  double Wc{};
 };
 
-struct DifferenceAnBn
+struct sDifferenceAnBn
 {
-    std::vector<double> An;
-    std::vector<double> Bn;
+  std::vector<double> An;
+  std::vector<double> Bn;
 };
 
 class ButterworthFilter
 {
-
 public:
-    // Prints the filter order and cutoff frequency
-    void PrintFilter_Specs();
-    void PrintFilter_ContinuousTimeRoots();
+  // Prints the filter order and cutoff frequency
+  void printFilterSpecs() const;
+  void printFilterContinuousTimeRoots() const;
 
-    void PrintContinuousTimeTF();
-    void PrintDiscreteTimeTF();
+  void printContinuousTimeTF() const;
+  void printDiscreteTimeTF() const;
 
-    void Buttord(double Wp, double Ws, double Ap, double As);
+  void Buttord(double const & Wp, double const & Ws, double const & Ap, double const & As);
 
-    // Setters and Getters
-    void setCuttoffFrequency(double Wc); // Wc is the cut-off frequency in [rad/sec]
+  // Setters and Getters
+  void setCuttoffFrequency(double const & Wc);  // Wc is the cut-off frequency in [rad/sec]
 
-    // fc is cut-off frequency in [Hz] and fs is the sampling frequency in [Hz]
-    void setCuttoffFrequency(double fc, double fs);
-    void setOrder(int N);
+  // fc is cut-off frequency in [Hz] and fs is the sampling frequency in [Hz]
+  void setCuttoffFrequency(double const & fc, double const & fs);
+  void setOrder(int const & N);
 
-    // Get the order, cut-off frequency and other filter properties
-    Order_Cutoff getOrderCutOff();
-    DifferenceAnBn getAnBn();
+  // Get the order, cut-off frequency and other filter properties
+  [[nodiscard]] sOrderCutoff getOrderCutOff() const;
+  [[nodiscard]] sDifferenceAnBn getAnBn() const;
 
-    std::vector<double> getAn();
-    std::vector<double> getBn();
+  [[nodiscard]] std::vector<double> getAn() const;
+  [[nodiscard]] std::vector<double> getBn() const;
 
-    // computes continous time transfer function
-    void computeContinuousTimeTF(bool sampling_freqency = false);
+  // computes continuous time transfer function
+  void computeContinuousTimeTF(bool const & use_sampling_frequency = false);
 
-    // computes continous time transfer function
-    void computeDiscreteTimeTF(bool sampling_freqency = false);
+  // computes continuous time transfer function
+  void computeDiscreteTimeTF(bool const & use_sampling_frequency = false);
 
 private:
-    // member variables
-    /*
-     * Frequencies are all in [rad/sec] angular frequincy and Magnitudes are in dB
-     *
-     * */
+  // member variables
+  int order_{1};                      // filter order
+  double cutoff_frequency_rad_sec{};  // filter cut-off frequency [rad/sec]
 
-    // double mWp, mWs, mAp, mAs;   // WP; passband frequency [rad/sc], Ws:
-    // stopband frequeny, Ap. {As}: pass {stop}band ripple [dB],
+  // Boolean parameter when a sampling frequency is defined. Default is false.
+  // bool pre_warp_{};
+  double sampling_frequency_hz{1.0};
 
-    int mOrder = 0;                 // filter order
-    double mCutoff_Frequency = 0.0; // filter cut-off frequency [rad/sec]
+  const double Td_{2.};  // constant of bilinear transformation
 
-    // Boolean parameter when a sampling frequency is defined. Default is false
-    bool prewarp = false;
-    double mSampling_Frequency = 1.0;
+  // Gain of the discrete time function
+  std::complex<double> discrete_time_gain_{1.0, 0.0};
 
-    const double Td = 2.0;
-    // Gain of the discrete time function
-    std::complex<double> mDiscreteTimeGain{1.0, 0.0};
+  // Continuous time transfer function roots
+  std::vector<double> phase_angles_{};
+  std::vector<std::complex<double>> continuous_time_roots_{};
 
-    // Continuous time transfer function roots
-    std::vector<double> mPhaseAngles{0.0};
-    std::vector<std::complex<double>> mContinuousTimeRoots{{0.0, 0.0}};
+  // Discrete time zeros and roots
+  std::vector<std::complex<double>> discrete_time_roots_{{0.0, 0.0}};
+  std::vector<std::complex<double>> discrete_time_zeros_{{-1.0, 0.0}};
 
-    // Discrete time zeros and roots
-    std::vector<std::complex<double>> mDiscreteTimeRoots{{0.0, 0.0}};
-    std::vector<std::complex<double>> mDiscreteTimeZeros{{-1.0, 0.0}};
+  // Continuous time transfer function numerator denominators
+  std::vector<std::complex<double>> continuous_time_denominator_{{0.0, 0.0}};
+  double continuous_time_numerator_{0.0};
 
-    // Continuous time transfer function numerator denominators
-    std::vector<std::complex<double>> mContinuousTimeDenominator{{0.0, 0.0}};
-    double mContinuousTimeNumerator = 0.0;
+  // Discrete time transfer function numerator denominators
+  std::vector<std::complex<double>> discrete_time_denominator_{{0.0, 0.0}};
+  std::vector<std::complex<double>> discrete_time_numerator_{{0.0, 0.0}};
 
-    // Discrete time transfer function numerator denominators
-    std::vector<std::complex<double>> mDiscreteTimeDenominator{{0.0, 0.0}};
-    std::vector<std::complex<double>> mDiscreteTimeNumerator{{0.0, 0.0}};
+  // Numerator and Denominator Coefficients Bn and An of Discrete Time Filter
 
-    // Numerator and Denominator Coefficients Bn and An of Discrete Time Filter
+  std::vector<double> An_{0.0};
+  std::vector<double> Bn_{0.0};
 
-    std::vector<double> mAn{0.0};
-    std::vector<double> mBn{0.0};
+  // METHODS
+  // polynomial function returns the coefficients given the roots of a polynomial
+  static std::vector<std::complex<double>> poly(std::vector<std::complex<double>> const & roots);
 
-    // METHODS
-    // polynomial function returns the coefficients given the roots of a
-    // polynomial
-    std::vector<std::complex<double>>
-    poly(std::vector<std::complex<double>> &roots);
+  /*
+   * Implementation starts by computing the pole locations of the filter in the
+   * polar coordinate system . The algorithm first locates the poles  computing
+   * the phase angle and then poles as a complex number From the poles, the
+   * coefficients of denominator polynomial is calculated.
+   *
+   * Therefore, without phase, the roots cannot be calculated. The following
+   * three methods should be called successively.
+   *
+   * */
 
-    /*
-     * Implementation starts by computing the pole locations of the filter in the
-     * polar coordinate system . The algorithm first locates the poles  computing
-     * the phase angle and then poles as a complex number From the poles, the
-     * coefficients of denominator polynomial is calculated.
-     *
-     * Therefore, without phase, the roots cannot be calculated. The following
-     * three methods should be called successively.
-     *
-     * */
+  // computes the filter root locations in the polar coordinate system
+  void computePhaseAngles();
 
-    // computes the filter root locations in the polar coordinate system
-    void computePhaseAngles();
-
-    // Computes continuous time roots from the phase angles
-    void computeContinuousTimeRoots(bool use_sampling_freqency = false);
-
+  // Computes continuous time roots from the phase angles
+  void computeContinuousTimeRoots(bool const & use_sampling_freqency = false);
 };

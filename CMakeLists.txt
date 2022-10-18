@@ -3,7 +3,7 @@ project(ButterworthFilterTools)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory(lib/googletest-master)
+#add_subdirectory(lib/googletest-master)
 include_directories(/lib/googletest-master/googletest/include include)
 
 set(FILTER_INCLUDE /lib/googletest-master/googletest/include
